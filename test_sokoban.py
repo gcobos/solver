@@ -7,7 +7,17 @@ if __name__=='__main__':
     from sokoban import *
     from time import time
 
-    soko = Sokoban(SOKOBAN_MAP)
+
+    sokomap = """#############
+#   #X     X#
+#        O O#
+#  #### ### #
+# O #       #
+#  ##   ##  #
+#@  #   X   #
+#############"""
+
+    soko = Sokoban(sokomap)
     print soko
-    print resolve(soko, error_sokoban, tmax = 1800, par=30, max_level = 100)
+    resolve(soko, error_sokoban, tmax = 1800, par=40, max_level = 30)
 

@@ -327,20 +327,22 @@ def printerr (t):
 
 def resolve (obj,err,tmax=60,tol=0,par=10, max_level=10):
 	
-	t0=time()
-	(res,stat,sol,met)=solve(obj,err,tmax,tol,par,max_level)
+    t0=time()
+    (res,stat,sol,met)=solve(obj,err,tmax,tol,par,max_level)
 
-	tt=time()-t0
-	if (tt>=tmax and not tmax==0):
-		cad="Timeout, partial solution (%d segs) \n" % (tmax)
-	else:
-		cad="Time: %d segs\n" % (tt)
+    tt=time()-t0
+    if (tt>=tmax and not tmax==0):
+        cad="Timeout, partial solution (%d segs) \n" % (tmax)
+    else:
+        cad="Time: %d segs\n" % (tt)
 	
-	cad += "Nodes/sec {}\n".format(len(stat)/tt)
-	sol=getSolution()
-	for i in sol:
-		getattr(obj,i)()
-	
-	cad=cad+str(sol)
-	return cad+"\n"+str(obj)
+    cad += "Nodes/sec {}\n".format(len(stat)/tt)
+    sol=getSolution()
+    for i in sol:
+        sleep(0.5)
+        getattr(obj,i)()
+        print(obj)
+
+    cad=cad+str(sol)
+    print(cad)
 

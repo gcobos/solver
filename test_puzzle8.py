@@ -11,6 +11,6 @@ if __name__=='__main__':
     puzzle = PuzzleX(PUZZLE8)
     scramble(puzzle, scrambling)
     print puzzle
-    print resolve(puzzle, errorPuzzle, tmax = 10, par=scrambling*2, max_level = scrambling)
+    resolve(puzzle, errorPuzzle, tmax = 10, par=scrambling*2, max_level = scrambling)
     
     

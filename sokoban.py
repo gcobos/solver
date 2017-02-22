@@ -22,18 +22,17 @@ TYPE_FILLED_TARGET = "Y"
 TYPE_PLAYER = "@"
 
 SOKOBAN_MAP = """#############
-#   #X      #
-#        O  #
+#   #X     X#
+#        O O#
 #  #### ### #
-# O #     # #
-#   #   # # #
+# O #       #
+#  ##   ##  #
 #@  #   X   #
-#############
-"""
+#############"""
 
 class Sokoban(object):
 
-    def __init__(self, _map):
+    def __init__(self, _map = SOKOBAN_MAP):
         
         self.soko_map = copy(_map.splitlines())
 
