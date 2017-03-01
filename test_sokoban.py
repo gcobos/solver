@@ -1,4 +1,4 @@
-#!/usr/bin/pypy -OO
+#!/usr/bin/env python -OO
 # -*- encoding: iso-8859-1 -*-
 
 if __name__=='__main__':
@@ -7,17 +7,42 @@ if __name__=='__main__':
     from sokoban import *
     from time import time
 
-
-    sokomap = """#############
+    sokomap1 = """#############
 #   #X     X#
 #        O O#
 #  #### ### #
-# O #       #
-#  ##   ##  #
+# O # X     #
+#  ## O ##  #
 #@  #   X   #
 #############"""
 
-    soko = Sokoban(sokomap)
+
+    sokomap2 = """
+##############
+#XX  #     ###
+#XX  # O  O  #
+#XX  #O####  #
+#XX    @ ##  #
+#XX  # #  O ##
+###### ##O O #
+  # O  O O O #
+  #    #     #
+  ############"""
+
+
+    sokomap3 = """
+##############
+#X   #     ###
+#    #       #
+#    # ####  #
+#X     @ ##  #
+#X   # #  O ##
+###### ##O O #
+  #          #
+  #    #     #
+  ############"""
+
+    soko = Sokoban(sokomap1)
     print soko
-    resolve(soko, error_sokoban, tmax = 1800, par=40, max_level = 30)
+    resolve(soko, error_sokoban, tmax = 0, par=100, max_level = 100, max_error=1000)
 

@@ -1,4 +1,4 @@
-#!/usr/bin/pypy -OO
+#!/usr/bin/python -OO
 # -*- encoding: iso-8859-1 -*-
 
 if __name__=='__main__':

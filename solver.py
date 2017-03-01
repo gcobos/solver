@@ -1,4 +1,4 @@
-#!/usr/bin/pypy -OO
+#!/usr/bin/python -OO
 # -*- encoding: iso-8859-1 -*-
 
 from types import *
@@ -66,9 +66,9 @@ ser el paralelismo.
 
 """
 
-def solve (obj,errFunc,timeout=0.0,tolerance=0.0,maxParallel=1000, maxLevelLimit=1000):
+def solve (obj,errFunc,timeout=0.0,tolerance=0.0,maxParallel=1000, maxLevelLimit=1000, maxErrorAllowed=float("inf")):
 
-	global Levels,Status,ErrFunc,Result,SolHash,Timeout,Methods,NumMethods,Tolerance,MaxParallel,Lock,MinLevel,MaxLevel,MaxLevelLimit
+	global Levels,Status,ErrFunc,Result,SolHash,Timeout,Methods,NumMethods,Tolerance,MaxParallel,Lock,MinLevel,MaxLevel,MaxLevelLimit, MaxErrorAllowed
 
 	# Inicializa las variables globales
 	Levels={}
@@ -81,6 +81,7 @@ def solve (obj,errFunc,timeout=0.0,tolerance=0.0,maxParallel=1000, maxLevelLimit
 	MinLevel=0
 	MaxLevel=0
 	MaxLevelLimit=max(MaxParallel, maxLevelLimit)
+	MaxErrorAllowed = maxErrorAllowed
 	
 	# Incializa las locales
 	objhash=getHash(obj)
@@ -153,7 +154,7 @@ def solve (obj,errFunc,timeout=0.0,tolerance=0.0,maxParallel=1000, maxLevelLimit
 
 def _solve (level):
 
-	global Levels,Result,SolHash,Methods,NumMethods,ErrFunc,Tolerance,Lock,MinLevel,MaxLevel, MaxLevelLimit
+	global Levels,Result,SolHash,Methods,NumMethods,ErrFunc,Tolerance,Lock,MinLevel,MaxLevel, MaxLevelLimit, MaxErrorAllowed
 
 	while (Result==NOT_SOLVED):
 		if ((level-MinLevel)<MaxParallel):
@@ -162,9 +163,12 @@ def _solve (level):
 			try:
 				(objhash,order,method,distance,father,obj)=Levels[level].get_nowait()
 				
-
+				if distance > MaxErrorAllowed:
+				    sleep(0.1)
+				    continue
+				
 				# Guarda el nodo actual en el hash de estados # Status[objhash]=[nivel,metodo,distancia,padre]
-				if (insertState(objhash,level,method,distance,father)):
+				if insertState(objhash,level,method,distance,father):
 
 					# Check if it's a solution
 					if (distance<=Tolerance):
@@ -177,10 +181,9 @@ def _solve (level):
 
 						# Si el error actual es mayor que el error de cabeza
 						# del nivel anterior, hay una espera
-						if (level>0 and level>MinLevel):
+						if level>0 and level>MinLevel:
 							ant=Levels[level-1]
-							if (ant.qsize()>0):
-								if (distance>ant.queue[0][3]):
+							if len(ant.queue) and distance>ant.queue[0][3]:
 									sleep(0.1)
 						
 						# Inicializa el nivel+1, solo si no existe ya
@@ -231,12 +234,12 @@ def _solve (level):
 						break
 					
 				#printerr("%d: Esperando a que se llene la cola para seguir procesando" % (level))
-				sleep(0.3)	# Espera a que se llene la cola
+				sleep(0.1)	# Espera a que se llene la cola
 					
 					
 		else:
-			#printerr("%d: Máximo paralelismo de colas alcanzado. Esperando..." % (level))
-			sleep(0.1*level)
+			#printerr("%d: Maximo paralelismo de colas alcanzado. Esperando..." % (level))
+			sleep(1*level)
 		
 #	printerr("Nivel %d saliendo" % level)
 
@@ -325,10 +328,10 @@ def printerr (t):
 	sys.stderr.write(str(t)+"\n")
 
 
-def resolve (obj,err,tmax=60,tol=0,par=10, max_level=10):
+def resolve (obj,err,tmax=60,tol=0,par=10, max_level=10, max_error=float("inf")):
 	
     t0=time()
-    (res,stat,sol,met)=solve(obj,err,tmax,tol,par,max_level)
+    (res,stat,sol,met)=solve(obj,err,tmax,tol,par,max_level, max_error)
 
     tt=time()-t0
     if (tt>=tmax and not tmax==0):
@@ -337,6 +340,8 @@ def resolve (obj,err,tmax=60,tol=0,par=10, max_level=10):
         cad="Time: %d segs\n" % (tt)
 	
     cad += "Nodes/sec {}\n".format(len(stat)/tt)
+    print(cad)
+    raw_input()
     sol=getSolution()
     for i in sol:
         sleep(0.5)
@@ -345,4 +350,4 @@ def resolve (obj,err,tmax=60,tol=0,par=10, max_level=10):
 
     cad=cad+str(sol)
     print(cad)
-
+    sleep(1)

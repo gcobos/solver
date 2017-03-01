@@ -1,4 +1,4 @@
-#!/usr/bin/pypy -OO
+#!/usr/bin/python -OO
 # -*- encoding: iso-8859-1 -*-
 
 from solver import solve,getSolution
@@ -355,6 +355,9 @@ def error5 (obj):
 				prb.append(j)
 		minerr=minerr+len(prb)-1
 	return minerr
+
+def error6 (obj):
+  return sum((len(set(i)) for i in obj.p))-6
 
 def scramble (rubik,times, fixed = []):
 	i=0
